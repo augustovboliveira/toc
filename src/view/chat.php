@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat</title>
     <script type="text/javascript">
+        /*
         function ajax() {
             var req = new XMLHttpRequest();
             req.onreadystatechange = function() {
@@ -17,7 +18,8 @@
             req.open('GET', '/current/test/chat.php', true);
             req.send();
         }
-        setInterval(function(){ajax();},1000);
+        setInterval(function(){ajax();},1000);]
+        */
     </script>
 </head>
 <body onload="ajax();">
@@ -25,7 +27,7 @@
 
     </div>
     <br>
-    <form method="POST" action="chat.php">
+    <form method="POST" action="../../controller/v1.php">
         <input type="hidden" name="id_remetente" id="id_remetente" value="1">
         <input type="hidden" name="id_sala" id="id_sala" value="1">
         <label for="conteudo">Digite sua mensagem:
@@ -33,37 +35,5 @@
         </label>
         <button type="submit">Enviar</button>
     </form>
-    <?php
-        $id_remetente;
-        $id_sala;
-        $conteudo;
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $id_remetente = $_POST['id_remetente'];
-            $id_sala = $_POST['id_sala'];
-            $conteudo = $_POST['conteudo'];
-
-            $url = 'http://localhost/current/api/v1.php?apicall=poststudent';
-            $data = array('id_remetente' => $id_remetente, 'id_sala' => $id_sala, 'conteudo' => $conteudo);
-
-            $options = array(
-                'http' => array(
-                    'header' => "Content-Type: application/x-www-form-urlencoded\r\n",
-                    'method' => 'POST',
-                    'content' => http_build_query($data)
-                )
-            );
-
-            $context = stream_context_create($options);
-            $result = file_get_contents($url, false, $context);
-            if (!$result) { 
-                echo "Things gone wrong";
-                echo "<br><br><br>";
-                var_dump($result);
-            }
-        }        
-
-        
-        
-    ?>
 </body>
 </html>

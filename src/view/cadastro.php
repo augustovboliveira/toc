@@ -25,12 +25,12 @@ h3, h2{
 </head>
 
 <body>
-<img src="logo.png" alt="Logo do Site (TOC)" width=70 height=625 ALIGN=LEFT>
+<img src="../../public/assets/logo.png" alt="Logo do Site (TOC)" width=70 height=625 ALIGN=LEFT>
     
 <div class="content">
 <div class="centered-content">
     
-     <form name="Cadastro" method="POST" action="/current/api/v1.php?apicall=poststudent">
+     <form name="Cadastro" method="POST" action="//api/v1.php?apicall=poststudent">
      <br><br><br><br>
 
      <h2 style="text-align:center">CRIE SUA CONTA<br><br><br></h2>

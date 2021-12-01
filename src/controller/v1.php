@@ -1,35 +1,17 @@
 <?php 
-	require_once dirname(__FILE__) . '/../db/DbOperation.php';
+	require '../model/EstudanteModel.php';
+	require '../model/MensagemModel.php';
+	require 'ParametrosController.php';
 
-	function isTheseParametersAvailable($params) {
-		$available = true; 
-		$missingparams = ""; 
-		
-		foreach ($params as $param) {
-			if (!isset($_POST[$param]) || strlen($_POST[$param]) <= 0) {
-				$available = false; 
-				$missingparams = $missingparams . ", " . $param; 
-			}
-		}
-		
-		if(!$available){
-			$response = array(); 
-			$response['error'] = true; 
-			$response['message'] = 'Parameters ' . substr($missingparams, 1, strlen($missingparams)) . ' missing';
-		
-			echo json_encode($response);
-			die();
-		}
-	}
 	$response = array();
 	
 	if (isset($_GET['apicall'])) {
 		switch ($_GET['apicall']) {
-			case 'poststudent':
+			case 'post_estudante':
 				isTheseParametersAvailable(array('nome','escola','email', 'senha'));
 				
-				$db = new DbOperation();
-				$result = $db->postStudent(
+				$db = new EstudanteModel();
+				$result = $db->post_estudante(
 					$_POST['nome'],
 					$_POST['escola'],
 					$_POST['email'],
@@ -39,24 +21,39 @@
 				if ($result) {
 					$response['error'] = false; 
 					$response['message'] = 'Cadastro realizado com sucesso';
-					$response['estudante'] = $db->getStudent();
+					$response['estudante'] = $db->get_all_estudante();
 				} else {
 					$response['error'] = true; 
 					$response['message'] = 'Algum erro ocorreu por favor tente novamente';
 				}
 			break;
             
-            case 'getstudent':
-				$db = new DbOperation();
+            case 'get_all_estudante':
+				$model = new EstudanteModel();
 				$response['error'] = false; 
 				$response['message'] = 'Pedido concluído com sucesso';
-				$response['estudante'] = $db->getStudent();
+				$response['estudantes'] = $model->get_all_estudante();
 			break;  
 
-			case 'putstudent':
+			case 'get_estudante_id':
+				isTheseParametersAvailable(array('nome'));
+				$model = new EstudanteModel();
+				$result = $model->get_estudante_id($_GET['nome']);
+
+				if ($result) {
+					$response['error'] = false; 
+					$response['message'] = 'Pedido concluído com sucesso';
+					$response['estudantes'] = $model->get_all_estudante();
+				} else {
+					$response['error'] = true; 
+					$response['message'] = 'Algum erro ocorreu por favor tente novamente';
+				}
+			break;  
+
+			case 'put_estudante':
 				isTheseParametersAvailable(array('id','nome','email','escola','senha'));
-				$db = new DbOperation();
-				$result = $db->putStudent(
+				$db = new EstudanteModel();
+				$result = $db->put_estudante(
 					$_POST['id'],
 					$_POST['nome'],
 					$_POST['email'],
@@ -67,21 +64,21 @@
 				if ($result) {
 					$response['error'] = false; 
 					$response['message'] = 'Estudante atualizado com sucesso';
-					$response['estudantes'] = $db->getEstudante();
+					$response['estudantes'] = $db->get_all_estudante();
 				} else {
 					$response['error'] = true; 
 					$response['message'] = 'Algum erro ocorreu por favor tente novamente';
 				}
 			break; 
 			
-			case 'deletestudent':
+			case 'delete_estudante':
 				if (isset($_GET['id'])) {
 					$db = new DbOperation();
 
 					if ($db->deleteStudent($_GET['id'])) {
 						$response['error'] = false; 
 						$response['message'] = 'Estudante excluído com sucesso';
-						$response['heroes'] = $db->getStudent();
+						$response['heroes'] = $db->get_all_estudante();
 					} else {
 						$response['error'] = true; 
 						$response['message'] = 'Algum erro ocorreu por favor tente novamente';
@@ -92,10 +89,10 @@
 				}
 			break;
 
-			case 'postmessage':
+			case 'post_mensagem':
 				isTheseParametersAvailable(array('id_remetente','id_sala','conteudo'));
 				$db = new DbOperation();
-				$result = $db->postMessage(
+				$result = $db->post_mensagem(
 					$_POST['id_remetente'],
 					$_POST['id_sala'],
 					$_POST['conteudo']
@@ -104,7 +101,7 @@
 				if ($result) {
 					$response['error'] = false;
 					$response['message'] = 'Pedido concluído com sucesso';
-					$response['mensagens'] = $db->getMessage();
+					$response['mensagens'] = $db->get_all_mensagem();
 				} else {
 					
 					$response['error'] = true;
@@ -112,18 +109,18 @@
 				}
 			break;
 
-			case 'getmessagejsonresponse':
+			case 'get_mensagem_multiarray':
 				$db = new DbOperation();
 				$response['error'] = false; 
 				$response['message'] = 'Pedido concluído com sucesso';
-				$response['mensagens'] = $db->getMessageJSONResponse();
+				$response['mensagens'] = $db->get_mensagem_multiarray();
 			break;  
 
-			case 'getarraymessage':
+			case 'get_mensagem_array':
 				$db = new DbOperation();
 				$response['error'] = false; 
 				$response['message'] = 'Pedido concluído com sucesso';
-				$response['mensagens'] = $db->getArrayMessage();
+				$response['mensagens'] = $db->get_mensagem_array();
 			break;  
         }
     } else {
